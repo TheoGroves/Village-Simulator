@@ -6,5 +6,11 @@ class Villager:
         self.y = y
         self.mood = "content"
 
+    def follow_path(self, path):
+        if not path == []:
+            self.x = path[0][0]
+            self.y = path[0][1]
+            path.pop(0)
+
     def render(self, renderer: Renderer):
         renderer.draw_circ(self.x, self.y, 1, (255, 255, 255))
