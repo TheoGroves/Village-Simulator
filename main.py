@@ -2,6 +2,7 @@ import pygame
 from renderer import Renderer
 from villager import Villager
 from tile_manager import TileManager
+from detail_manager import DetailManager
 import time
 
 pygame.init()
@@ -12,7 +13,10 @@ clock = pygame.time.Clock()
 
 renderer = Renderer(screen, 16)
 
-tm = TileManager(64,64,8)
+gen_start = time.time()
+tile_manager = TileManager(128,128,8,50)
+detail_manager = DetailManager(tile_manager, 5000)
+print(f"Generated world of size {tile_manager.width}x{tile_manager.height} with {len(tile_manager.chunks)} chunks in {time.time()-gen_start:.2f}s")
 
 v = Villager(20, 20)
 
@@ -25,6 +29,7 @@ while True:
     renderer.draw_calls = 0
     start = time.time()
 
+    # Events
     event_start = time.time()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -32,35 +37,39 @@ while True:
             raise SystemExit
     event_time = time.time() - event_start
 
+    # Pathfinding
     inp_start = time.time()
     mouse_x = int((pygame.mouse.get_pos()[0]+renderer.x)/renderer.grid_size)
     mouse_y = int((pygame.mouse.get_pos()[1]+renderer.y)/renderer.grid_size)
     if (mouse_x, mouse_y) != last_target:
         if pygame.mouse.get_pressed()[0]:
-            path = tm.find_path(v.x, v.y, mouse_x, mouse_y)
+            path = tile_manager.find_path(v.x, v.y, mouse_x, mouse_y)
             last_target = (mouse_x, mouse_y)
     inp_time = time.time()-inp_start
 
+    # Object Updating
     update_start = time.time()
     renderer.move(dt)
     if path and frame % 30 == 0:
         v.follow_path(path)
     update_time = time.time() - update_start
 
+    # Rendering
     rend_start = time.time()
     screen.fill("black")
-    tm.render(renderer)
+    tile_manager.render(renderer)
+    detail_manager.render(renderer)
     v.render(renderer)
 
     if path:
         for x,y in path:
-            renderer.draw_rect(x, y, 1, 1, (255, 0, 0))
+            renderer.draw_circ(x, y, 0.5, (255, 0, 0))
         renderer.draw_circ(mouse_x, mouse_y, 1, (255, 0, 0))
-
+    
     renderer.render()
     rend_time = time.time()-rend_start
 
-    #pygame.display.set_caption(f"{time.time()-start:.4f}/{(1/60):.4f} - {(time.time()-start)/(1/60)*100:.2f}% frametime used")
+    # Misc
     pygame.display.set_caption(
         f"E: {event_time*1000:.2f} "
         f"I: {inp_time*1000:.2f} "

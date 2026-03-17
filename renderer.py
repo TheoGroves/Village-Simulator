@@ -35,23 +35,41 @@ class Renderer:
     def move(self, dt):
         keys = pygame.key.get_pressed()
 
-        if keys[pygame.K_UP]:
-            self.y -= 50 * dt
-        if keys[pygame.K_DOWN]:
-            self.y += 50 * dt
-        if keys[pygame.K_LEFT]:
-            self.x -= 50 * dt
-        if keys[pygame.K_RIGHT]:
-            self.x += 50 * dt
+        speed = 1
+        if keys[pygame.K_LSHIFT]:
+            speed = 2
 
-        for event in pygame.event.get():
-            if event.type == pygame.MOUSEWHEEL:
-                self.target_grid_size += event.y * 5
+        if keys[pygame.K_w]:
+            self.y -= 200 * dt * speed
+        if keys[pygame.K_s]:
+            self.y += 200 * dt * speed
+        if keys[pygame.K_a]:
+            self.x -= 200 * dt * speed
+        if keys[pygame.K_d]:
+            self.x += 200 * dt * speed
+
+        if keys[pygame.K_EQUALS]:
+            self.target_grid_size += 1
+        if keys[pygame.K_MINUS]:
+            self.target_grid_size -= 1
 
         self.target_grid_size = max(5, min(self.target_grid_size, 500))
         self.target_grid_size = round(self.target_grid_size)
 
+        old_gs = self.grid_size
+
         self.grid_size += (self.target_grid_size - self.grid_size) * 0.2
+        self.grid_size = round(self.grid_size)
+
+        if self.grid_size != old_gs:
+            scale = self.grid_size / old_gs
+
+            screen_w, screen_h = self.screen.get_size()
+            cx = screen_w / 2
+            cy = screen_h / 2
+
+            self.x = (self.x + cx) * scale - cx
+            self.y = (self.y + cy) * scale - cy
 
     def render(self):
         for x, y, w, h, col in self.rects:
