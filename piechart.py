@@ -8,7 +8,7 @@ class PieChart:
 
         self.x = 100
         self.y = 100
-        self.rad = 50
+        self.rad = 70
 
     def add_value(self, key, value):
         self.values[key] = value
@@ -29,6 +29,8 @@ class PieChart:
             (100,255,255)
         ]
 
+        font = pygame.font.SysFont(None, 18)
+
         for i, (key, value) in enumerate(self.values.items()):
             fraction = value / self.total
             end_angle = start_angle + fraction * 2 * math.pi
@@ -42,7 +44,20 @@ class PieChart:
                 py = self.y + math.sin(angle) * self.rad
                 points.append((px, py))
 
-            pygame.draw.polygon(screen, colors[i % len(colors)], points)
+            color = colors[i % len(colors)]
+            pygame.draw.polygon(screen, color, points)
+
+            mid_angle = (start_angle + end_angle) / 2
+            text_radius = self.rad * 0.5
+
+            tx = self.x + math.cos(mid_angle) * text_radius
+            ty = self.y + math.sin(mid_angle) * text_radius
+
+            label = f"{key}: {value:.2f}"
+            text_surface = font.render(label, True, (0, 0, 0))
+            text_rect = text_surface.get_rect(center=(tx, ty))
+
+            screen.blit(text_surface, text_rect)
 
             start_angle = end_angle
 

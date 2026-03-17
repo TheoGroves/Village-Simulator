@@ -3,6 +3,7 @@ from renderer import Renderer
 from villager import Villager
 from tile_manager import TileManager
 from detail_manager import DetailManager
+from piechart import PieChart
 import time
 
 pygame.init()
@@ -20,14 +21,17 @@ print(f"Generated world of size {tile_manager.width}x{tile_manager.height} with 
 
 v = Villager(20, 20)
 
+pc = PieChart()
+
 dt=0
 frame = 0
 last_target = (0,0)
 path = None
 
 while True:
-    renderer.draw_calls = 0
     start = time.time()
+    renderer.draw_calls = 0
+    pc.values = {}
 
     # Events
     event_start = time.time()
@@ -78,6 +82,11 @@ while True:
         f"T: {(event_time + inp_time + update_time + rend_time)*1000:.2f} ms "
         f"DC: {renderer.draw_calls}"
     )
+    pc.add_value("E", event_time*1000)
+    pc.add_value("I", inp_time*1000)
+    pc.add_value("U", update_time*1000)
+    pc.add_value("R", rend_time*1000)
+    pc.render(screen)
 
     pygame.display.flip()
     clock.tick(60)

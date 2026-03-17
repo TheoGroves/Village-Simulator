@@ -53,7 +53,7 @@ class Renderer:
         if keys[pygame.K_MINUS]:
             self.target_grid_size -= 1
 
-        self.target_grid_size = max(5, min(self.target_grid_size, 500))
+        self.target_grid_size = max(2, min(self.target_grid_size, 500))
         self.target_grid_size = round(self.target_grid_size)
 
         old_gs = self.grid_size

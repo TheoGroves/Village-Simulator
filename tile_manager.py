@@ -159,6 +159,26 @@ class TileManager:
                         open_set.add((nx, ny))
 
         return None
+    
+    def add_tile(self, type, x, y):
+        if not (0 <= x < self.width and 0 <= y < self.height):
+            return
+
+        tile = self.tiles[y][x]
+
+        tile.set_type(type)
+
+        tile.set_height(tile.height)
+
+        cx = x // CHUNK_SIZE
+        cy = y // CHUNK_SIZE
+
+        chunk_surf = self.chunks.get((cx, cy))
+        if chunk_surf:
+            tx = x % CHUNK_SIZE
+            ty = y % CHUNK_SIZE
+
+            chunk_surf.set_at((tx, ty), tile.height_colour)
 
     def render(self, renderer):
         screen_w, screen_h = pygame.display.get_window_size()
