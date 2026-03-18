@@ -2,8 +2,8 @@ import pygame
 
 class Renderer:
     def __init__(self, screen, grid_size=50):
-        self.x = 0
-        self.y = 0
+        self.x = -324
+        self.y = -46
         self.screen = screen
 
         self.grid_size = grid_size

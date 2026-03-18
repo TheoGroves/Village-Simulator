@@ -2,6 +2,7 @@ from perlin_noise import perlin_octaves
 from smoothstep import smoothstep_n
 import pygame
 import heapq
+import random
 
 WATER = 0
 DIRT  = 1
@@ -71,14 +72,20 @@ class TileManager:
         self.width = width
         self.height = height
         self.chunk_size = CHUNK_SIZE
+        self.ind = 0
 
-        self.tiles = [[Tile() for _ in range(width)] for _ in range(height)]
+        self.tiles = []
+        self.generate_world(octaves, scale)
+        self.rebuild_chunks()
 
-        for y in range(height):
-            for x in range(width):
-                h = perlin_octaves(x * (1/scale), y * (1/scale), 0, octaves)
+    def generate_world(self, octaves=8, scale=20):
+        self.tiles = [[Tile() for _ in range(self.width)] for _ in range(self.height)]
+        seed = random.randint(0, 10000)
+        for y in range(self.height):
+            for x in range(self.width):
+                h = perlin_octaves(x * (1/scale), y * (1/scale), seed, octaves)
                 h_smooth = smoothstep_n(h, 10)
-                c = perlin_octaves(x * (1/(scale*0.5)), y * (1/(scale*0.5)), 100, 4)
+                c = perlin_octaves(x * (1/(scale*0.5)), y * (1/(scale*0.5)), seed, 4)
                 y_noise = smoothstep_n(perlin_octaves(x * 0.02, y * 0.02, 200, 2), 20)
                 tile_type = self.determine_type(h_smooth)
                 self.tiles[y][x].set_type(tile_type)
@@ -86,20 +93,25 @@ class TileManager:
                 self.tiles[y][x].yellow = y_noise
                 self.tiles[y][x].set_height(h_smooth)
 
+    def rebuild_chunks(self):
         self.chunks = {}
-        chunk_cols = (width + CHUNK_SIZE - 1) // CHUNK_SIZE
-        chunk_rows = (height + CHUNK_SIZE - 1) // CHUNK_SIZE
+
+        chunk_cols = (self.width + CHUNK_SIZE - 1) // CHUNK_SIZE
+        chunk_rows = (self.height + CHUNK_SIZE - 1) // CHUNK_SIZE
 
         for cy in range(chunk_rows):
             for cx in range(chunk_cols):
                 surf = pygame.Surface((CHUNK_SIZE, CHUNK_SIZE))
+
                 for ty in range(CHUNK_SIZE):
                     for tx in range(CHUNK_SIZE):
                         world_x = cx * CHUNK_SIZE + tx
                         world_y = cy * CHUNK_SIZE + ty
-                        if world_x < width and world_y < height:
+
+                        if world_x < self.width and world_y < self.height:
                             color = self.tiles[world_y][world_x].height_colour
                             surf.set_at((tx, ty), color)
+
                 self.chunks[(cx, cy)] = surf
 
 

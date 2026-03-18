@@ -12,7 +12,7 @@ screen = pygame.display.set_mode((1280,720))
 
 clock = pygame.time.Clock()
 
-renderer = Renderer(screen, 16)
+renderer = Renderer(screen, 5)
 
 gen_start = time.time()
 tile_manager = TileManager(128,128,8,50)
@@ -49,6 +49,11 @@ while True:
         if pygame.mouse.get_pressed()[0]:
             path = tile_manager.find_path(v.x, v.y, mouse_x, mouse_y)
             last_target = (mouse_x, mouse_y)
+
+    # World regen
+    if pygame.key.get_pressed()[pygame.K_r]:
+        tile_manager = TileManager(128, 128, 8, 50)
+        detail_manager = DetailManager(tile_manager, 5000)
     inp_time = time.time()-inp_start
 
     # Object Updating

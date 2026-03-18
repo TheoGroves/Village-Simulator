@@ -32,6 +32,8 @@ class PieChart:
         font = pygame.font.SysFont(None, 18)
 
         for i, (key, value) in enumerate(self.values.items()):
+            if self.total == 0:
+                self.total = 1
             fraction = value / self.total
             end_angle = start_angle + fraction * 2 * math.pi
 
