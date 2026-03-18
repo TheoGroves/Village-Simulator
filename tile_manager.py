@@ -3,6 +3,7 @@ from smoothstep import smoothstep_n
 import pygame
 import heapq
 import random
+import time
 
 WATER = 0
 DIRT  = 1
@@ -77,6 +78,20 @@ class TileManager:
         self.tiles = []
         self.generate_world(octaves, scale)
         self.rebuild_chunks()
+
+    @staticmethod
+    def generation_time_estimate(width, height):
+        """Estimates time to generate a world of width and height"""
+        times = []
+        for _ in range(5):
+            start = time.time()
+            h=perlin_octaves(1 * 0.05, 1 * 0.05, 0, 8)
+            smoothstep_n(h, 10)
+            perlin_octaves(1 * 0.1, 1 * 0.1, 0, 4)
+            smoothstep_n(perlin_octaves(1 * 0.02, 1 * 0.02, 200, 2), 20)
+            times.append(time.time()-start)
+        
+        return (sum(times)/len(times)) * (width*height)
 
     def generate_world(self, octaves=8, scale=20):
         self.tiles = [[Tile() for _ in range(self.width)] for _ in range(self.height)]

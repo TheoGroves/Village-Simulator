@@ -1,25 +1,40 @@
 import pygame
 from renderer import Renderer
-from villager import Villager
+from pawn import Pawn
 from tile_manager import TileManager
 from detail_manager import DetailManager
 from piechart import PieChart
+from pawn_selector import PawnSelector
 import time
 
 pygame.init()
 
 screen = pygame.display.set_mode((1280,720))
 
+world_width = 128
+world_height = 128
+
+estimate = TileManager.generation_time_estimate(world_width, world_height)
+font = pygame.font.SysFont(None, 50)
+text_surface = font.render(f"Generating World. Estimated Generation time: {estimate:.2f}s", True, (255, 255, 255))
+text_rect = text_surface.get_rect(center=(pygame.display.get_window_size()[0]/2, pygame.display.get_window_size()[1]/2))
+screen.blit(text_surface, text_rect)
+pygame.display.flip()
+
 clock = pygame.time.Clock()
 
 renderer = Renderer(screen, 5)
 
 gen_start = time.time()
-tile_manager = TileManager(128,128,8,50)
+tile_manager = TileManager(world_width,world_height,8,50)
 detail_manager = DetailManager(tile_manager, 5000)
 print(f"Generated world of size {tile_manager.width}x{tile_manager.height} with {len(tile_manager.chunks)} chunks in {time.time()-gen_start:.2f}s")
 
-v = Villager(20, 20)
+ps = PawnSelector()
+
+v = Pawn(0, 0)
+v.drafted = True
+v.set_random_pos(tile_manager)
 
 pc = PieChart()
 
@@ -45,7 +60,7 @@ while True:
     inp_start = time.time()
     mouse_x = int((pygame.mouse.get_pos()[0]+renderer.x)/renderer.grid_size)
     mouse_y = int((pygame.mouse.get_pos()[1]+renderer.y)/renderer.grid_size)
-    if (mouse_x, mouse_y) != last_target:
+    if (mouse_x, mouse_y) != last_target and v.drafted:
         if pygame.mouse.get_pressed()[0]:
             path = tile_manager.find_path(v.x, v.y, mouse_x, mouse_y)
             last_target = (mouse_x, mouse_y)
@@ -54,6 +69,7 @@ while True:
     if pygame.key.get_pressed()[pygame.K_r]:
         tile_manager = TileManager(128, 128, 8, 50)
         detail_manager = DetailManager(tile_manager, 5000)
+        v.set_random_pos(tile_manager)
     inp_time = time.time()-inp_start
 
     # Object Updating
@@ -63,7 +79,7 @@ while True:
         v.follow_path(path)
     update_time = time.time() - update_start
 
-    # Rendering
+    # World Rendering
     rend_start = time.time()
     screen.fill("black")
     tile_manager.render(renderer)
@@ -72,10 +88,13 @@ while True:
 
     if path:
         for x,y in path:
-            renderer.draw_circ(x, y, 0.5, (255, 0, 0))
-        renderer.draw_circ(mouse_x, mouse_y, 1, (255, 0, 0))
+            renderer.draw_circ(x, y, 0.5, (255, 255, 255))
+        renderer.draw_circ(mouse_x, mouse_y, 1, (255, 255, 255))
     
     renderer.render()
+
+    # UI Rendering
+    ps.render(screen)
     rend_time = time.time()-rend_start
 
     # Misc
