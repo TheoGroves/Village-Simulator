@@ -9,12 +9,14 @@ WATER = 0
 DIRT  = 1
 GRASS = 2
 ROCK  = 3
+WALL  = 4
 
 TILE_COLOURS = {
     WATER: (109, 164, 201),
     DIRT:  (128, 110, 91),
     GRASS: (178, 212, 148),
-    ROCK:  (102, 102, 102)
+    ROCK:  (102, 102, 102),
+    WALL:  (105, 95, 84)
 }
 
 CHUNK_SIZE = 16

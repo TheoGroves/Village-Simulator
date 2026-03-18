@@ -50,7 +50,7 @@ class PawnSelector:
                          border_radius=5)
 
         # text
-        stat_text = f"{stat_name}: {stat_value}%"
+        stat_text = f"{stat_name}: {stat_value:.0f}%"
         text_surface = self.font.render(stat_text, True, (255, 255, 255))
         text_rect = text_surface.get_rect(
             center=(bar_x + bar_width / 2, y + bar_height / 2)
@@ -69,11 +69,9 @@ class PawnSelector:
                 self.panel_height
             )
 
-            # panel
             pygame.draw.rect(screen, (80, 80, 80), panel_rect, border_radius=10)
             pygame.draw.rect(screen, (50, 50, 50), panel_rect, width=6, border_radius=10)
 
-            # clip so scrolling stays inside
             screen.set_clip(panel_rect)
 
             self.lines = 0
@@ -81,11 +79,8 @@ class PawnSelector:
             self.add_text(f"Name: {self.selected_pawn.name}", screen)
             self.add_text("Stats:", screen)
 
-            self.lines += 1  # spacing
-
             self.add_stat_bar("Food", self.selected_pawn.food, screen)
             self.add_stat_bar("Sleep", self.selected_pawn.sleep, screen)
             self.add_stat_bar("Recreation", self.selected_pawn.recreation, screen)
 
-            # reset clip
             screen.set_clip(None)

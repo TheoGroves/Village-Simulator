@@ -1,4 +1,4 @@
-from tile_manager import TileManager, DIRT, GRASS
+from tile_manager import DIRT, GRASS
 from renderer import Renderer
 from perlin_noise import perlin_octaves
 from smoothstep import smoothstep_n
@@ -8,7 +8,7 @@ import pygame
 CHUNK_SIZE = 16
 
 class DetailManager:
-    def __init__(self, tile_manager: TileManager, num_trees=500, num_rocks = 300):
+    def __init__(self, tile_manager, num_trees=500, num_rocks = 300):
         self.trees = []
         self.rocks = []
         self.chunks = {}
