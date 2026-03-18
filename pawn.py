@@ -12,11 +12,17 @@ TONES = [
 
 class Pawn:
     def __init__(self, x=0, y=0):
+        # engine
         self.x = x
         self.y = y
         self.tone = random.choice(TONES)
-        self.mood = "content"
+        self.name = "Test Name"
         self.drafted = False
+
+        # stats (0-100)
+        self.food = 100
+        self.sleep = 100
+        self.recreation = 100
 
     def follow_path(self, path):
         if not path == []:

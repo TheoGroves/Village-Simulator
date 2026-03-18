@@ -36,6 +36,8 @@ v = Pawn(0, 0)
 v.drafted = True
 v.set_random_pos(tile_manager)
 
+ps.select_pawn(v)
+
 pc = PieChart()
 
 dt=0
@@ -51,6 +53,7 @@ while True:
     # Events
     event_start = time.time()
     for event in pygame.event.get():
+        ps.handle_event(event)
         if event.type == pygame.QUIT:
             pygame.quit()
             raise SystemExit
