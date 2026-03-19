@@ -10,13 +10,15 @@ DIRT  = 1
 GRASS = 2
 ROCK  = 3
 WALL  = 4
+PLANT = 5
 
 TILE_COLOURS = {
     WATER: (109, 164, 201),
     DIRT:  (128, 110, 91),
     GRASS: (178, 212, 148),
     ROCK:  (102, 102, 102),
-    WALL:  (105, 95, 84)
+    WALL:  (105, 95, 84),
+    PLANT: (237, 255, 191)
 }
 
 CHUNK_SIZE = 16
@@ -173,7 +175,7 @@ class TileManager:
                     continue
 
                 tile = self.tiles[ny][nx]
-                if tile.type in (WATER, ROCK):
+                if tile.type in (WATER, ROCK, WALL):
                     continue
 
                 cost = 1 + tile.height * 5

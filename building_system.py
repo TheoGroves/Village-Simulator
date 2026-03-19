@@ -1,4 +1,4 @@
-from tile_manager import WALL
+from tile_manager import WALL, PLANT
 import pygame
 
 class BuildingSystem:
@@ -7,7 +7,10 @@ class BuildingSystem:
         self.renderer = renderer
 
         self.building_enabled = False
-        self.zero_held = False
+        self.zoning_enabled = False
+
+        self.zero_held = False # Zero to build
+        self.nine_held = False # Nine to zone plants
 
     def build(self):
         mouse_x = int((pygame.mouse.get_pos()[0]+self.renderer.x)/self.renderer.grid_size)
@@ -20,5 +23,15 @@ class BuildingSystem:
         else:
             self.zero_held = False
 
+        if pygame.key.get_pressed()[pygame.K_9]:
+            if not self.nine_held:
+                self.zoning_enabled = not self.zoning_enabled
+                self.nine_held = True
+        else:
+            self.nine_held = False
+
         if pygame.mouse.get_pressed()[0] and self.building_enabled:
-            self.tile_manager.add_tile(WALL, mouse_x, mouse_y)
+            tile = WALL
+            if self.zoning_enabled:
+                tile = PLANT
+            self.tile_manager.add_tile(tile, mouse_x, mouse_y)

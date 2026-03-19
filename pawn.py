@@ -20,20 +20,37 @@ class Pawn:
         self.name = "Test Name"
         self.drafted = False
 
+        # pathfinding
         self.tile_manager = tile_manager
         self.last_target = (0,0)
         self.path = []
+
+        # scheduler
+        self.action = ""
+        self.queue = []
 
         # stats (0-100)
         self.food = 100
         self.sleep = 100
         self.recreation = 100
 
+    def determine_action(self):
+        # Priorities:
+
+        # Get Food
+        # Sleep
+        # Get Recreation
+        # Work
+        # Wander
+        self.action = "Wandering"
+        if not self.path:
+            self.pathfind(self.x + random.randint(-20, 20), self.y + random.randint(-20, 20))
+
     def update(self, renderer):
         if self.drafted: # Manual pathfinding when drafted
             self.drafted_pathfind(renderer)
         else: # Automatic AI pathfinding when undrafted
-            print("AI in control")
+            self.determine_action()
 
         if self.path:
             self.follow_path(self.path)
@@ -46,7 +63,7 @@ class Pawn:
         self.recreation = max(0, min(100, self.recreation))
 
     def pathfind(self, x, y):
-        return self.tile_manager.find_path(self.x, self.y, x, y)
+        self.path = self.tile_manager.find_path(self.x, self.y, x, y)
     
     def drafted_pathfind(self, renderer):
         path = []

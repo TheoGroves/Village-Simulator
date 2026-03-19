@@ -36,7 +36,6 @@ ps = PawnSelector()
 building_system = BuildingSystem(tile_manager, renderer)
 
 v = Pawn(0, 0, tile_manager)
-v.drafted = True
 v.set_random_pos(tile_manager)
 
 ps.select_pawn(v)

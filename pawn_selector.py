@@ -45,7 +45,7 @@ class PawnSelector:
 
         # fill
         stat_bar_width = (stat_value / 100) * bar_width
-        pygame.draw.rect(screen, (0, 255, 0),
+        pygame.draw.rect(screen, (0, 0, 220),
                          pygame.Rect(bar_x, y, stat_bar_width, bar_height),
                          border_radius=5)
 
@@ -77,6 +77,7 @@ class PawnSelector:
             self.lines = 0
 
             self.add_text(f"Name: {self.selected_pawn.name}", screen)
+            self.add_text(f"Action: {self.selected_pawn.action}", screen)
             self.add_text("Stats:", screen)
 
             self.add_stat_bar("Food", self.selected_pawn.food, screen)
