@@ -45,7 +45,7 @@ class PawnSelector:
 
         # fill
         stat_bar_width = (stat_value / 100) * bar_width
-        pygame.draw.rect(screen, (0, 0, 220),
+        pygame.draw.rect(screen, (69, 98, 122),
                          pygame.Rect(bar_x, y, stat_bar_width, bar_height),
                          border_radius=5)
 

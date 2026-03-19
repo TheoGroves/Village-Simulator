@@ -6,6 +6,8 @@ from detail_manager import DetailManager
 from piechart import PieChart
 from pawn_selector import PawnSelector
 from building_system import BuildingSystem
+from plant_manager import PlantManager
+from item_manager import ItemManager
 import time
 
 pygame.init()
@@ -34,6 +36,10 @@ print(f"Generated world of size {tile_manager.width}x{tile_manager.height} with 
 ps = PawnSelector()
 
 building_system = BuildingSystem(tile_manager, renderer)
+
+plant_manager = PlantManager(tile_manager)
+
+item_manager = ItemManager()
 
 v = Pawn(0, 0, tile_manager)
 v.set_random_pos(tile_manager)
@@ -87,9 +93,9 @@ while True:
     elif keys[pygame.K_2]:
         time_scale = 2
     elif keys[pygame.K_3]:
-        time_scale = 3
+        time_scale = 6
     elif keys[pygame.K_4]:
-        time_scale = 4
+        time_scale = 12
 
     # Building
     building_system.build()
@@ -100,14 +106,18 @@ while True:
     update_start = time.time()
     renderer.move(dt)
     if frame % (30//time_scale) == 0: # Tick
-        v.update(renderer)
+        v.update(renderer, plant_manager, item_manager)
+        plant_manager.update()
+
     update_time = time.time() - update_start
 
     # World Rendering
     rend_start = time.time()
-    screen.fill("black")
+    screen.fill((37, 43, 48))
     tile_manager.render(renderer)
     detail_manager.render(renderer)
+    plant_manager.render(renderer)
+    item_manager.render(renderer)
     v.render(renderer)
     
     renderer.render()

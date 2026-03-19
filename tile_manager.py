@@ -211,6 +211,14 @@ class TileManager:
 
             chunk_surf.set_at((tx, ty), tile.height_colour)
 
+    def get_tiles(self, type):
+        tiles = []
+        for y, row in enumerate(self.tiles):
+            for x, tile in enumerate(row):
+                if tile.type == type:
+                    tiles.append((tile, x, y))
+        return tiles
+
     def render(self, renderer):
         screen_w, screen_h = pygame.display.get_window_size()
         gs = renderer.grid_size
