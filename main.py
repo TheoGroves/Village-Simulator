@@ -42,6 +42,12 @@ plant_manager = PlantManager(tile_manager)
 item_manager = ItemManager()
 
 v = Pawn(0, 0, tile_manager)
+v.damage()
+v.damage()
+v.damage()
+v.damage()
+v.damage()
+v.damage()
 v.set_random_pos(tile_manager)
 
 ps.select_pawn(v)

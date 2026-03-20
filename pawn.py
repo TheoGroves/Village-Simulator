@@ -1,5 +1,6 @@
 from renderer import Renderer
 from tile_manager import ROCK, WATER
+from health_system import HealthSystem
 import random
 import pygame
 
@@ -57,6 +58,9 @@ class Pawn:
         self.action = ""
         self.queue = []
 
+        # health
+        self.health = HealthSystem()
+
         # stats (0-100)
         self.food = 100
         self.sleep = 100
@@ -108,11 +112,16 @@ class Pawn:
             if self.path: # Follow path automatically if one exists
                 self.follow_path(self.path)
         else:
+            self.action = "Sleeping"
             self.sleep += 1
-            if self.sleep >= 90:
+            if self.sleep > 99:
                 self.sleeping = False
         
-        
+        # Update health
+        if self.food < 1:
+            self.health.malnutrition.set_rate(0.5)
+        self.health.update()
+
         # Decay stats
         self.food -= 0.125
         self.sleep -= 0.125
@@ -154,6 +163,9 @@ class Pawn:
         self.x = test_x
         self.y = test_y
 
+    def damage(self):
+        self.health.give_injury()
+        print(self.health.body_parts)
 
     def render(self, renderer: Renderer):
         renderer.draw_circ(self.x, self.y, 1.3, (0,0,0))
