@@ -103,6 +103,14 @@ class Pawn:
             self.pathfind(self.x + random.randint(-20, 20), self.y + random.randint(-20, 20))
 
     def update(self, renderer, plant_manager, item_manager):
+        if self.health.dead:
+            self.action = "Dead"
+            return # If dead, don't update
+        
+        if self.health.unconscious:
+            self.action = "Unconscious"
+            return
+
         if not self.sleeping: # While awake:
             if self.drafted: # Manual pathfinding when drafted
                 self.drafted_pathfind(renderer)
@@ -118,8 +126,10 @@ class Pawn:
                 self.sleeping = False
         
         # Update health
-        if self.food < 1:
+        if self.food < 1: # when hungry increase malnutrtion
             self.health.malnutrition.set_rate(0.5)
+        else:
+            self.health.malnutrition.set_rate(-2.0)
         self.health.update()
 
         # Decay stats

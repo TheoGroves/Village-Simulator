@@ -10,22 +10,33 @@ class BodyPart:
         self.affects = affects # what this body part affects when damaged
         self.affect_amount = affect_amount # how much the affected stats are changed by damage (0-1)
 
+        self.bleeding = 0 # How much the injury bleeds
         self.injuries = [] # tuple(type, damage)
 
     def damage(self):
+        # injury(name, damage, bleedrate)
+        CUT = ("Cut", random.randint(1,3), random.randint(1,4))
+        LACERATION = ("Laceration", random.randint(3,6), random.randint(5,9))
+        CRACK = ("Crack", random.randint(1,4), 0)
+        BROKEN = ("Broken", random.randint(4,8), 0)
+        CRUSH = ("Crush", random.randint(2,5), random.randint(1,2))
+
         POTENTIAL_INJURIES = []
         if self.part_type == "flesh":
-            POTENTIAL_INJURIES = [("Cut", random.randint(1,3)), ("Laceration", random.randint(3,6))]
+            POTENTIAL_INJURIES = [CUT, LACERATION]
         elif self.part_type == "bone":
-            POTENTIAL_INJURIES = [("Crack", random.randint(1,4)), ("Broken", random.randint(4,8))]
+            POTENTIAL_INJURIES = [CRACK, BROKEN]
         elif self.part_type == "organ":
-            POTENTIAL_INJURIES = [("Cut", random.randint(1,6)), ("Crush", random.randint(2,5))]
+            POTENTIAL_INJURIES = [CUT, CRUSH]
         self.injuries.append(random.choice(POTENTIAL_INJURIES))
 
     def update(self):
         self.health = self.MAX_HEALTH
+        self.bleeding = 0
         for injury in self.injuries:
+            self.bleeding += injury[2] # increase body part bleeding by the bleedrate of the injury
             self.health -= injury[1] # reduce body part health by the damage of the injury
+        self.health = max(0, self.health)
 
     def __repr__(self):
         return f"{self.name}: {self.health} - {self.injuries}"
@@ -45,11 +56,18 @@ class Affliction:
 
     def update(self):
         self.progress += self.progress_speed
-        return self.progress >= 100
+        self.progress = max(0, min(self.progress, 100))
+        return self.progress > 99
+
+    def __repr__(self):
+        return f"{self.name}: {self.progress:.0f}/100"
 
 class HealthSystem:
     """High level health system that handles all body parts and afflictions"""
     def __init__(self):
+        self.dead = False
+        self.unconscious = False
+
         # Stats
         self.pain = 0
         self.consciousness = 100
@@ -65,6 +83,11 @@ class HealthSystem:
             BodyPart("Right Arm", 20, "flesh", ["manipulation"], 0.5),
             BodyPart("Left Leg", 25, "flesh", ["movement"], 0.5),
             BodyPart("Right Leg", 25, "flesh", ["movement"], 0.5)
+        ]
+        self.NECCESSARY_BODY_PARTS = [
+            "Head",
+            "Neck",
+            "Body"
         ]
 
         # Internal health
@@ -84,9 +107,13 @@ class HealthSystem:
         self.movement = 100
         self.manipulation = 100
 
+        bleeding = 0
+
         for part in self.body_parts:
             part.update()
             health_proportion = part.health / part.MAX_HEALTH
+            if health_proportion == 0 and part.name in self.NECCESSARY_BODY_PARTS:
+                self.dead = True
             self.pain += ((1 - health_proportion) * part.affect_amount)
             stat_modifier = 1 - ((1 - health_proportion) * part.affect_amount)
             for affect in part.affects:
@@ -98,4 +125,19 @@ class HealthSystem:
                     self.manipulation *= stat_modifier
                 else:
                     print(f"Error: {part.name} affects {affect} which doesn't exist")
-        print(f"Pain: {self.pain} | Consciousness: {self.consciousness} | Movement: {self.movement} | Manipulation: {self.manipulation}")
+
+            bleeding += part.bleeding
+        self.blood_loss.set_rate((bleeding ** 1.3) / 25)
+
+        # affect stats
+        self.consciousness *= (1 - (self.blood_loss.progress / 100) * 0.7)
+        self.consciousness *= max(0, 1 - self.pain * 0.3)
+        self.movement *= (self.consciousness/100)
+        self.manipulation *= (self.consciousness/100)
+
+        self.unconscious = self.consciousness < 20 or self.pain > 0.6
+
+        if self.blood_loss.progress > 99 or self.malnutrition.progress > 99 or self.consciousness < 1:
+            self.dead = True
+                
+        print(f"Pain: {self.pain:.2f} | Consciousness: {self.consciousness:.0f} | Movement: {self.movement:.0f} | Manipulation: {self.manipulation:.0f} | Afflictions: {self.blood_loss}, {self.malnutrition}")
