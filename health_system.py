@@ -127,7 +127,7 @@ class HealthSystem:
                     print(f"Error: {part.name} affects {affect} which doesn't exist")
 
             bleeding += part.bleeding
-        self.blood_loss.set_rate((bleeding ** 1.3) / 25)
+        self.blood_loss.set_rate((bleeding ** 1.2) / 75)
 
         # affect stats
         self.consciousness *= (1 - (self.blood_loss.progress / 100) * 0.7)

@@ -11,7 +11,7 @@ class PawnSelector:
         self.lines = 0
         self.scroll = 0
 
-        self.panel_width = 500
+        self.panel_width = 450
         self.panel_height = 170
 
     def select_pawn(self, pawn):

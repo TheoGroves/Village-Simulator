@@ -5,6 +5,7 @@ from tile_manager import TileManager
 from detail_manager import DetailManager
 from piechart import PieChart
 from pawn_selector import PawnSelector
+from health_panel import HealthPanel
 from building_system import BuildingSystem
 from plant_manager import PlantManager
 from item_manager import ItemManager
@@ -34,6 +35,7 @@ detail_manager = DetailManager(tile_manager, 5000)
 print(f"Generated world of size {tile_manager.width}x{tile_manager.height} with {len(tile_manager.chunks)} chunks in {time.time()-gen_start:.2f}s")
 
 ps = PawnSelector()
+hp = HealthPanel()
 
 building_system = BuildingSystem(tile_manager, renderer)
 
@@ -51,6 +53,7 @@ v.damage()
 v.set_random_pos(tile_manager)
 
 ps.select_pawn(v)
+hp.select_pawn(ps.selected_pawn)
 
 pc = PieChart()
 render_pc = False
@@ -70,6 +73,7 @@ while True:
     event_start = time.time()
     for event in pygame.event.get():
         ps.handle_event(event)
+        hp.handle_event(event)
         if event.type == pygame.QUIT:
             pygame.quit()
             raise SystemExit
@@ -130,6 +134,7 @@ while True:
 
     # UI Rendering
     ps.render(screen)
+    hp.render(screen)
     rend_time = time.time()-rend_start
 
     # Misc

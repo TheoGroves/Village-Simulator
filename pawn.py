@@ -19,18 +19,18 @@ MALE_NAMES = [
     "Timothy", "Ronald", "Jason", "Jeffrey", "Ryan", "Jacob", "Gary", "Nicholas",
     "Eric", "Stephen", "Larry", "Justin", "Benjamin", "Samuel", "Adam", "Gregory",
     "Harry", "Frank", "Raymond", "Jack", "Alexander", "Henry", "Douglas", "Joe",
-    "Zachary", "Peter", "Walter", "Christian", "Austin", "Kyle", "Ethan", "Jacob",
+    "Zachary", "Peter", "Walter", "Christian", "Austin", "Kyle", "Ethan",
     "Craig", "Leo", "Wayne", "Austin"
 ]
 
 FEMALE_NAMES = [
     "Mary", "Patricia", "Jennifer", "Linda", "Elizabeth", "Barbara", "Susan", "Jessica",
-    "Sarah", "Karen", "Nancy", "Betty", "Helen", "Dorothy", "Sandra", "Ashley",
+    "Sarah", "Karen", "Nancy", "Helen", "Dorothy", "Sandra", "Ashley",
     "Kimberly", "Emily", "Donna", "Michelle", "Carol", "Amanda", "Melissa", "Deborah",
     "Rebecca", "Laura", "Sharon", "Cynthia", "Kathleen", "Amy", "Shirley", "Anna",
     "Ruth", "Debra", "Virginia", "Kathryn", "Maria", "Frances", "Carolyn", "Christine",
     "Rachel", "Janet", "Emma", "Catherine", "Diane", "Teresa", "Janice", "Julia",
-    "Grace", "Beverly", "Hannah", "Mildred", "Theresa", "Betty", "Joan", "Evelyn",
+    "Grace", "Beverly", "Mildred", "Theresa", "Betty", "Joan", "Evelyn",
     "Alice", "Judy", "Cheryl", "Hannah", "Joan", "Diana", "Brittany", "Madeline"
 ]
 
