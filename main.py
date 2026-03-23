@@ -1,15 +1,9 @@
 import pygame
-from renderer import Renderer
-from pawn import Pawn
-from tile_manager import TileManager
-from detail_manager import DetailManager
-from piechart import PieChart
-from pawn_selector import PawnSelector
-from health_panel import HealthPanel
-from building_system import BuildingSystem
-from plant_manager import PlantManager
-from item_manager import ItemManager
 import time
+from rendering import Renderer, PieChart
+from pawn import Pawn
+from world import TileManager, DetailManager, BuildingSystem, PlantManager, ItemManager
+from ui import PawnSelector, HealthPanel
 
 pygame.init()
 

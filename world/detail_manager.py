@@ -1,7 +1,7 @@
-from tile_manager import DIRT, GRASS
-from renderer import Renderer
-from perlin_noise import perlin_octaves
-from smoothstep import smoothstep_n
+from .tile_manager import DIRT, GRASS
+from rendering import Renderer
+from .perlin_noise import perlin_octaves
+from .smoothstep import smoothstep_n
 import random
 import pygame
 

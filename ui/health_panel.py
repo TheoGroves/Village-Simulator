@@ -87,6 +87,7 @@ class HealthPanel:
         self.add_bar("Malnutrition", health.malnutrition.progress, screen)
 
         self.add_text(" ", screen)
+        self.add_text(" ", screen)
 
         self.add_text("Body Parts:", screen)
 

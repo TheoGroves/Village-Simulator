@@ -1,6 +1,6 @@
-from renderer import Renderer
-from tile_manager import ROCK, WATER
-from health_system import HealthSystem
+from rendering import Renderer
+from world import ROCK, WATER
+from pawn import HealthSystem
 import random
 import pygame
 

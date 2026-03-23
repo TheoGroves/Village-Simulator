@@ -1,4 +1,4 @@
-from tile_manager import WALL, PLANT
+from .tile_manager import WALL, PLANT
 import pygame
 
 class BuildingSystem:

@@ -1,6 +1,6 @@
-from tile_manager import PLANT, TileManager
-from item_manager import ItemManager
-from renderer import Renderer
+from .tile_manager import PLANT, TileManager
+from .item_manager import ItemManager
+from rendering import Renderer
 
 class Plant:
     def __init__(self, x, y):
