@@ -37,6 +37,7 @@ building_system = BuildingSystem(tile_manager, renderer)
 plant_manager = PlantManager(tile_manager)
 
 item_manager = ItemManager()
+item_manager.scatter_items("Food", (230, 232, 216), 500, tile_manager)
 
 num_pawns = 5
 pawns = []

@@ -1,5 +1,5 @@
 from rendering import Renderer
-from world import ROCK, WATER
+from world import ROCK, WATER, HAUL
 from pawn import HealthSystem
 import random
 import pygame
@@ -48,6 +48,7 @@ class Pawn:
             self.name = random.choice(FEMALE_NAMES)
         self.drafted = False
         self.sleeping = False
+        self.carrying = None
 
         # pathfinding
         self.tile_manager = tile_manager
@@ -79,7 +80,7 @@ class Pawn:
                 
                 if self.x == food.x and self.y == food.y: # Eat when standing on food
                     item_manager.remove(food)
-                    self.food = 100
+                    self.food += 10
 
         # Sleep
         if self.sleep == 0: # Pass out from exaughstion
@@ -87,6 +88,7 @@ class Pawn:
 
         # Get Recreation - TODO
         # Work
+        # Planting:
         plant = plant_manager.find_nearest_mature_plant(self.x, self.y)
         if plant: # If a mature plant exists, work else wander
             if not self.path: # If not moving, pathfind towards plant
@@ -95,8 +97,28 @@ class Pawn:
 
             if self.x == plant.x and self.y == plant.y: # Harvest when standing on plant
                 plant.harvest(item_manager)
-            return
-
+        
+        # Hauling:
+        item = item_manager.find_nearest_by_type(self.x, self.y, "Any", tm=self.tile_manager, exclude_types=[HAUL])
+        if item and not self.carrying: # If valid item exists and not already hauling, pathfind towards it
+            if not self.path: # If not moving, pathfind towards item
+                self.action = "Hauling"
+                self.pathfind(item.x, item.y)
+            if self.x == item.x and self.y == item.y: # Pick up when standing on item
+                self.carrying = item
+                item_manager.remove(item)
+        if self.carrying: # if carrying an item
+            haul_zone = self.tile_manager.find_nearest_tile(self.x, self.y, HAUL) # Find closest haul zone
+            if not haul_zone[1] == None: # If a haul zone has been created continue
+                if not self.path: # If not moving, pathfind to nearest haul zone
+                    self.action = "Hauling"
+                    self.pathfind(haul_zone[1][0], haul_zone[1][1])
+                if self.x == haul_zone[1][0] and self.y == haul_zone[1][1]: # If standing on the haul zone tile place the item
+                    self.carrying.x = haul_zone[1][0]
+                    self.carrying.y = haul_zone[1][1]
+                    item_manager.add_item(item=self.carrying)
+                    self.carrying = None
+    
         # Wander
         if not self.path:
             self.action = "Wandering"

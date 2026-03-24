@@ -11,6 +11,7 @@ GRASS = 2
 ROCK  = 3
 WALL  = 4
 PLANT = 5
+HAUL = 6
 
 TILE_COLOURS = {
     WATER: (109, 164, 201),
@@ -18,7 +19,8 @@ TILE_COLOURS = {
     GRASS: (178, 212, 148),
     ROCK:  (102, 102, 102),
     WALL:  (105, 95, 84),
-    PLANT: (237, 255, 191)
+    PLANT: (237, 255, 191),
+    HAUL:  (255, 153, 243)
 }
 
 CHUNK_SIZE = 16
@@ -218,6 +220,31 @@ class TileManager:
                 if tile.type == type:
                     tiles.append((tile, x, y))
         return tiles
+    
+    def get_tile(self, x, y):
+        return self.tiles[y][x]
+    
+    def find_nearest_tile(self, x, y, tile_type):
+        nearest_tile = None
+        nearest_pos = None
+        nearest_distance = float("inf")
+
+        tiles = self.get_tiles(tile_type)
+
+        for tile, t_x, t_y in tiles:
+            dx = x - t_x
+            dy = y - t_y
+            distance = dx * dx + dy * dy
+
+            if distance == 0:
+                return tile, (t_x, t_y)
+
+            if distance < nearest_distance:
+                nearest_distance = distance
+                nearest_tile = tile
+                nearest_pos = (t_x, t_y)
+
+        return nearest_tile, nearest_pos
 
     def render(self, renderer):
         screen_w, screen_h = pygame.display.get_window_size()

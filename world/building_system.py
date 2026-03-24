@@ -1,4 +1,4 @@
-from .tile_manager import WALL, PLANT
+from .tile_manager import WALL, PLANT, HAUL
 import pygame
 
 class BuildingSystem:
@@ -7,10 +7,12 @@ class BuildingSystem:
         self.renderer = renderer
 
         self.building_enabled = False
-        self.zoning_enabled = False
+        self.plant_zoning_enabled = False
+        self.haul_zoning_enabled = False
 
         self.zero_held = False # Zero to build
         self.nine_held = False # Nine to zone plants
+        self.eight_held = False # Eight to zone hauling
 
     def build(self):
         mouse_x = int((pygame.mouse.get_pos()[0]+self.renderer.x)/self.renderer.grid_size)
@@ -25,13 +27,22 @@ class BuildingSystem:
 
         if pygame.key.get_pressed()[pygame.K_9]:
             if not self.nine_held:
-                self.zoning_enabled = not self.zoning_enabled
+                self.plant_zoning_enabled = not self.plant_zoning_enabled
                 self.nine_held = True
         else:
             self.nine_held = False
 
+        if pygame.key.get_pressed()[pygame.K_8]:
+            if not self.eight_held:
+                self.haul_zoning_enabled = not self.haul_zoning_enabled
+                self.eight_held = True
+        else:
+            self.eight_held = False
+
         if pygame.mouse.get_pressed()[0] and self.building_enabled:
             tile = WALL
-            if self.zoning_enabled:
+            if self.plant_zoning_enabled:
                 tile = PLANT
+            if self.haul_zoning_enabled:
+                tile = HAUL
             self.tile_manager.add_tile(tile, mouse_x, mouse_y)

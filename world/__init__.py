@@ -4,7 +4,7 @@ from .item_manager import ItemManager
 from .perlin_noise import perlin, perlin_octaves
 from .plant_manager import PlantManager
 from .smoothstep import smoothstep_n
-from .tile_manager import TileManager, WATER, DIRT, GRASS, ROCK, WALL, PLANT
+from .tile_manager import TileManager, WATER, DIRT, GRASS, ROCK, WALL, PLANT, HAUL
 
 __all__ = [
     "BuildingSystem",
@@ -20,5 +20,6 @@ __all__ = [
     "GRASS",
     "ROCK",
     "WALL",
-    "PLANT"
+    "PLANT",
+    "HAUL"
 ]

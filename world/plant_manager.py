@@ -1,6 +1,7 @@
 from .tile_manager import PLANT, TileManager
 from .item_manager import ItemManager
 from rendering import Renderer
+import random
 
 class Plant:
     def __init__(self, x, y):
@@ -9,6 +10,8 @@ class Plant:
         self.age = 0
         self.MATURE_AGE = 600
         self.harvestable = False
+        self.harvest_min = 6
+        self.harvest_max = 15
 
     def render(self, renderer: Renderer):
         renderer.draw_circ(self.x, self.y, self.age / self.MATURE_AGE, (136, 163, 116))
@@ -16,7 +19,8 @@ class Plant:
     def harvest(self, item_manager: ItemManager):
         self.harvestable = False
         self.age = 0
-        item_manager.add_item(self.x, self.y, "Food", (230, 232, 216))
+        for _ in range(random.randint(self.harvest_min, self.harvest_max)):
+            item_manager.add_item(self.x, self.y, "Food", (230, 232, 216))
 
 class PlantManager:
     def __init__(self, tile_manager: TileManager):
@@ -59,7 +63,7 @@ class PlantManager:
             else:
                 plant = self.plants[(x, y)]
                 if plant.age < plant.MATURE_AGE:
-                    plant.age += 1
+                    plant.age += 0.1
                 else:
                     plant.harvestable = True
 
