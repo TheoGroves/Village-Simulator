@@ -1,4 +1,5 @@
 import pygame
+from helpers import mouse_in_rect
 
 class HealthPanel:
     def __init__(self):
@@ -18,7 +19,7 @@ class HealthPanel:
         self.selected_pawn = pawn
 
     def handle_event(self, event):
-        if event.type == pygame.MOUSEWHEEL:
+        if event.type == pygame.MOUSEWHEEL and mouse_in_rect(pygame.Rect(self.top_left[0], self.top_left[1], self.panel_width, self.panel_height)):
             self.scroll -= event.y * 20
             self.scroll = max(0, self.scroll)
 

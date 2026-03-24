@@ -139,5 +139,3 @@ class HealthSystem:
 
         if self.blood_loss.progress > 99 or self.malnutrition.progress > 99 or self.consciousness < 1:
             self.dead = True
-                
-        print(f"Pain: {self.pain:.2f} | Consciousness: {self.consciousness:.0f} | Movement: {self.movement:.0f} | Manipulation: {self.manipulation:.0f} | Afflictions: {self.blood_loss}, {self.malnutrition}")

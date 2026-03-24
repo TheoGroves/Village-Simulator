@@ -1,9 +1,10 @@
 import pygame
 import time
-from rendering import Renderer, PieChart
+from rendering import Renderer, PieChart, LineGraph
 from pawn import Pawn
 from world import TileManager, DetailManager, BuildingSystem, PlantManager, ItemManager
 from ui import PawnSelector, HealthPanel
+from helpers import closest_to_mouse
 
 pygame.init()
 
@@ -37,19 +38,19 @@ plant_manager = PlantManager(tile_manager)
 
 item_manager = ItemManager()
 
-v = Pawn(0, 0, tile_manager)
-v.damage()
-v.damage()
-v.damage()
-v.damage()
-v.damage()
-v.damage()
-v.set_random_pos(tile_manager)
+num_pawns = 5
+pawns = []
+for i in range(num_pawns):
+    pawns.append(Pawn(0, 0, tile_manager))
+    pawns[i].set_random_pos(tile_manager)
 
-ps.select_pawn(v)
-hp.select_pawn(ps.selected_pawn)
+avg_event = [0] * 150
+avg_inp = [0] * 150
+avg_update = [0] * 150
+avg_rend = [0] * 150
 
 pc = PieChart()
+lg = LineGraph()
 render_pc = False
 f1_held = False
 
@@ -80,7 +81,8 @@ while True:
     if pygame.key.get_pressed()[pygame.K_r]:
         tile_manager = TileManager(128, 128, 8, 50)
         detail_manager = DetailManager(tile_manager, 5000)
-        v.set_random_pos(tile_manager)
+        for p in pawns:
+            p.set_random_pos(tile_manager)
 
     # Debug Pie Chart
     if pygame.key.get_pressed()[pygame.K_F1]:
@@ -104,13 +106,20 @@ while True:
     # Building
     building_system.build()
 
+    # Select Pawns
+    if pygame.mouse.get_pressed()[0]:
+        pawn = closest_to_mouse(pawns, renderer)
+        ps.select_pawn(pawn)
+        hp.select_pawn(pawn)
+
     inp_time = time.time()-inp_start
 
     # Object Updating
     update_start = time.time()
     renderer.move(dt)
     if frame % (30//time_scale) == 0: # Tick
-        v.update(renderer, plant_manager, item_manager)
+        for pawn in pawns:
+            pawn.update(renderer, plant_manager, item_manager)
         plant_manager.update()
 
     update_time = time.time() - update_start
@@ -122,7 +131,8 @@ while True:
     detail_manager.render(renderer)
     plant_manager.render(renderer)
     item_manager.render(renderer)
-    v.render(renderer)
+    for pawn in pawns:
+        pawn.render(renderer)
     
     renderer.render()
 
@@ -140,12 +150,26 @@ while True:
         f"T: {(event_time + inp_time + update_time + rend_time)*1000:.2f} ms "
         f"DC: {renderer.draw_calls}"
     )
-    pc.add_value("E", event_time*1000)
-    pc.add_value("I", inp_time*1000)
-    pc.add_value("U", update_time*1000)
-    pc.add_value("R", rend_time*1000)
+
+    avg_event.remove(avg_event[0])
+    avg_inp.remove(avg_inp[0])
+    avg_update.remove(avg_update[0])
+    avg_rend.remove(avg_rend[0])
+    avg_event.append(event_time*1000)
+    avg_inp.append(inp_time*1000)
+    avg_update.append(update_time*1000)
+    avg_rend.append(rend_time*1000)
+    pc.add_value("E", sum(avg_event)/len(avg_event))
+    pc.add_value("I", sum(avg_inp)/len(avg_inp))
+    pc.add_value("U", sum(avg_update)/len(avg_update))
+    pc.add_value("R", sum(avg_rend)/len(avg_rend))
+    lg.add_value(event_time*1000, 0, "Events")
+    lg.add_value(inp_time*1000, 1, "Input")
+    lg.add_value(update_time*1000, 2, "Update")
+    lg.add_value(rend_time*1000, 3, "Rendering")
     if render_pc:
         pc.render(screen)
+        lg.render(screen)
 
     pygame.display.flip()
     clock.tick(60)

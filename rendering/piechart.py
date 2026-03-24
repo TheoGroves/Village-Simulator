@@ -6,7 +6,7 @@ class PieChart:
         self.values = {}
         self.total = 0
 
-        self.x = 100
+        self.x = 75
         self.y = 100
         self.rad = 70
 
