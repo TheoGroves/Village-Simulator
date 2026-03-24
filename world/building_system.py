@@ -1,4 +1,4 @@
-from .tile_manager import WALL, PLANT, HAUL
+from .tile_manager import PLAN, PLANT, HAUL
 import pygame
 
 class BuildingSystem:
@@ -40,7 +40,7 @@ class BuildingSystem:
             self.eight_held = False
 
         if pygame.mouse.get_pressed()[0] and self.building_enabled:
-            tile = WALL
+            tile = PLAN
             if self.plant_zoning_enabled:
                 tile = PLANT
             if self.haul_zoning_enabled:

@@ -5,13 +5,17 @@ import heapq
 import random
 import time
 
+# Physical Tiles
 WATER = 0
 DIRT  = 1
 GRASS = 2
 ROCK  = 3
 WALL  = 4
+
+# Zoned Tiles
 PLANT = 5
 HAUL = 6
+PLAN = 7
 
 TILE_COLOURS = {
     WATER: (109, 164, 201),
@@ -20,7 +24,8 @@ TILE_COLOURS = {
     ROCK:  (102, 102, 102),
     WALL:  (105, 95, 84),
     PLANT: (237, 255, 191),
-    HAUL:  (255, 153, 243)
+    HAUL:  (255, 153, 243),
+    PLAN:  (209, 251, 255)
 }
 
 CHUNK_SIZE = 16

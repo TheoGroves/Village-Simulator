@@ -1,5 +1,5 @@
 from rendering import Renderer
-from world import ROCK, WATER, HAUL
+from world import ROCK, WATER, WALL, HAUL, PLAN
 from pawn import HealthSystem
 import random
 import pygame
@@ -97,7 +97,20 @@ class Pawn:
 
             if self.x == plant.x and self.y == plant.y: # Harvest when standing on plant
                 plant.harvest(item_manager)
-        
+
+        # Building:
+        plan = self.tile_manager.find_nearest_tile(self.x, self.y, PLAN)
+        if plan[0]: # If valid plan, pathfind towards it
+            if not self.path: # If not moving, pathfind towards plan
+                self.action = "Building"
+                self.pathfind(plan[1][0], plan[1][1]) # Pathfind to the plan
+                if self.path:
+                    if len(self.path) > 1: # Go to the tile before the plan to not place walls on top of self
+                        self.path.pop()
+            
+            if self.path and self.x == self.path[-1][0] and self.y == self.path[-1][1]: # When at end of path
+                self.tile_manager.add_tile(WALL, plan[1][0], plan[1][1]) # Replace plan with wall
+
         # Hauling:
         item = item_manager.find_nearest_by_type(self.x, self.y, "Any", tm=self.tile_manager, exclude_types=[HAUL])
         if item and not self.carrying: # If valid item exists and not already hauling, pathfind towards it
