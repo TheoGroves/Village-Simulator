@@ -20,7 +20,7 @@ class Plant:
         self.harvestable = False
         self.age = 0
         for _ in range(random.randint(self.harvest_min, self.harvest_max)):
-            item_manager.add_item(self.x, self.y, "Food", (230, 232, 216))
+            item_manager.add_item(self.x, self.y, "Food", (230, 232, 216), 0.1)
 
 class PlantManager:
     def __init__(self, tile_manager: TileManager):

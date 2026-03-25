@@ -71,7 +71,7 @@ class Renderer:
             self.x = (self.x + cx) * scale - cx
             self.y = (self.y + cy) * scale - cy
 
-    def render(self):
+    def render(self, dnc):
         for x, y, w, h, col in self.rects:
             pygame.draw.rect(self.screen, col, (x, y, w, h))
 

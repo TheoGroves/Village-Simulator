@@ -5,6 +5,7 @@ from .perlin_noise import perlin, perlin_octaves
 from .plant_manager import PlantManager
 from .smoothstep import smoothstep_n
 from .tile_manager import TileManager, WATER, DIRT, GRASS, ROCK, WALL, PLANT, HAUL, PLAN
+from .day_night_cycle import DayNightCycle
 
 __all__ = [
     "BuildingSystem",
@@ -22,5 +23,6 @@ __all__ = [
     "WALL",
     "PLANT",
     "HAUL",
-    "PLAN"
+    "PLAN",
+    "DayNightCycle"
 ]

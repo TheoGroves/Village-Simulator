@@ -2,12 +2,12 @@ import pygame
 import math
 
 class PieChart:
-    def __init__(self):
+    def __init__(self,offset_y=0,offset_x=0):
         self.values = {}
         self.total = 0
 
-        self.x = 75
-        self.y = 100
+        self.x = 75+offset_x
+        self.y = 100+offset_y
         self.rad = 70
 
     def add_value(self, key, value):

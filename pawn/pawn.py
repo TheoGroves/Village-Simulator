@@ -48,7 +48,7 @@ class Pawn:
             self.name = random.choice(FEMALE_NAMES)
         self.drafted = False
         self.sleeping = False
-        self.carrying = None
+        self.carrying = []
 
         # pathfinding
         self.tile_manager = tile_manager
@@ -113,24 +113,25 @@ class Pawn:
 
         # Hauling:
         item = item_manager.find_nearest_by_type(self.x, self.y, "Any", tm=self.tile_manager, exclude_types=[HAUL])
-        if item and not self.carrying: # If valid item exists and not already hauling, pathfind towards it
+        if item and not len(self.carrying) >= 10: # If valid item exists and not already hauling, pathfind towards it
             if not self.path: # If not moving, pathfind towards item
                 self.action = "Hauling"
                 self.pathfind(item.x, item.y)
             if self.x == item.x and self.y == item.y: # Pick up when standing on item
-                self.carrying = item
+                self.carrying.append(item)
                 item_manager.remove(item)
-        if self.carrying: # if carrying an item
+        if len(self.carrying) >= 10: # if carrying max items
             haul_zone = self.tile_manager.find_nearest_tile(self.x, self.y, HAUL) # Find closest haul zone
             if not haul_zone[1] == None: # If a haul zone has been created continue
                 if not self.path: # If not moving, pathfind to nearest haul zone
                     self.action = "Hauling"
                     self.pathfind(haul_zone[1][0], haul_zone[1][1])
                 if self.x == haul_zone[1][0] and self.y == haul_zone[1][1]: # If standing on the haul zone tile place the item
-                    self.carrying.x = haul_zone[1][0]
-                    self.carrying.y = haul_zone[1][1]
-                    item_manager.add_item(item=self.carrying)
-                    self.carrying = None
+                    for item in self.carrying:
+                        item.x = haul_zone[1][0]
+                        item.y = haul_zone[1][1]
+                        item_manager.add_item(item=item)
+                    self.carrying = []
     
         # Wander
         if not self.path:
@@ -162,13 +163,13 @@ class Pawn:
         
         # Update health
         if self.food < 1: # when hungry increase malnutrtion
-            self.health.malnutrition.set_rate(0.5)
+            self.health.malnutrition.set_rate(0.15)
         else:
-            self.health.malnutrition.set_rate(-2.0)
+            self.health.malnutrition.set_rate(-1.0)
         self.health.update()
 
         # Decay stats
-        self.food -= 0.125
+        self.food -= 0.05
         self.sleep -= 0.125
         self.recreation -= 0.125
 

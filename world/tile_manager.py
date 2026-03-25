@@ -153,6 +153,13 @@ class TileManager:
             return WATER
         
     def find_path(self, start_x, start_y, end_x, end_y):
+        # Early break if attempting to pathfind out of bounds
+        if not 0 < start_x < self.width-1 or not 0 < start_y < self.height-1 or not 0 < end_x < self.width-1 or not 0 < end_y < self.height-1:
+            return None
+        # Early break if attempting to pathfind to an impassable
+        if self.get_tile(start_x, start_y).type in (WATER, ROCK, WALL) or self.get_tile(end_x, end_y).type in (WATER, ROCK, WALL):
+            return None
+
         end = (end_x, end_y)
 
         def heuristic(x, y):

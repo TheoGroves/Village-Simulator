@@ -8,9 +8,9 @@ COLOURS = [
 ]
 
 class LineGraph:
-    def __init__(self):
-        self.x = 155
-        self.y = 150
+    def __init__(self,offset_x=0, offset_y=0):
+        self.x = 155+offset_x
+        self.y = 150+offset_y
 
         self.num_lines = len(COLOURS)
 
