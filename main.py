@@ -3,7 +3,7 @@ import time
 from rendering import Renderer
 from pawn import Pawn
 from world import TileManager, DetailManager, BuildingSystem, PlantManager, ItemManager, DayNightCycle
-from ui import PawnSelector, HealthPanel, PieChart, LineGraph
+from ui import PawnSelector, HealthPanel, PieChart, LineGraph, NotificationFeed
 from helpers import closest_to_mouse
 
 pygame.init()
@@ -38,6 +38,8 @@ plant_manager = PlantManager(tile_manager)
 
 item_manager = ItemManager()
 item_manager.scatter_items("Food", (230, 232, 216), 0.1,  500, tile_manager)
+
+notification_feed = NotificationFeed()
 
 dnc = DayNightCycle(500)
 
@@ -114,7 +116,7 @@ while True:
         time_scale = 12
 
     # Building
-    building_system.build()
+    building_system.build(notification_feed)
 
     # Select Pawns
     if pygame.mouse.get_pressed()[0] and not building_system.building_enabled:
@@ -173,6 +175,7 @@ while True:
     # UI Rendering
     ps.render(screen)
     hp.render(screen)
+    notification_feed.update(renderer.screen)
     rend_time = time.time()-rend_start
 
     # Misc
