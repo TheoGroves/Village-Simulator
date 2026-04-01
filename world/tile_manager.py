@@ -17,67 +17,38 @@ PLANT = 5
 HAUL = 6
 PLAN = 7
 
-TILE_COLOURS = {
-    WATER: (109, 164, 201),
-    DIRT:  (128, 110, 91),
-    GRASS: (178, 212, 148),
-    ROCK:  (102, 102, 102),
-    WALL:  (105, 95, 84),
-    PLANT: (237, 255, 191),
-    HAUL:  (255, 153, 243),
-    PLAN:  (209, 251, 255)
+TILE_SIZE = 64
+
+def load_tex(path):
+    img = pygame.image.load(path).convert()
+    return pygame.transform.scale(img, (TILE_SIZE, TILE_SIZE))
+
+TILE_TEXTURES = {
+    WATER: load_tex("assets/textures/water.jpg"),
+    DIRT:  load_tex("assets/textures/dirt.jpg"),
+    GRASS: load_tex("assets/textures/grass.jpg"),
+    ROCK:  load_tex("assets/textures/rock.jpg"),
+    WALL:  load_tex("assets/textures/wall.jpg")
 }
 
 CHUNK_SIZE = 16
 
 class Tile:
-    __slots__ = ('type', 'height', 'colour', 'height_colour', 'variation', 'yellow')
+    __slots__ = ('type', 'height', 'variation', 'yellow', 'tex')
 
     def __init__(self):
         self.type = WATER
         self.height = 0
         self.variation = 0
         self.yellow = 0
-        self.colour = TILE_COLOURS[self.type]
-        self.height_colour = self.colour
+        self.tex = TILE_TEXTURES[self.type]
 
     def set_type(self, type_int):
         self.type = type_int
-        self.colour = TILE_COLOURS[self.type]
+        self.tex = TILE_TEXTURES[self.type]
 
     def set_height(self, height):
         self.height = height
-
-        shade = 0.4 * self.height + 0.6
-        variation_factor = 0.85 + (self.variation + 1) * 0.15
-
-        r, g, b = self.colour
-
-        # Yellow patches in grass
-        if self.type == GRASS:
-            yellow_shift = int(self.yellow * 20)
-
-            r += yellow_shift
-            g += yellow_shift // 2
-            b -= yellow_shift
-
-        # Darker mountains
-        if self.type == ROCK:
-            shade = 0.5 * ((height-0.8)/0.2) + 0.5
-
-        # Darker Water
-        if self.type == WATER:
-            shade = 0.3 * ((height-0.2)/0.2) + 0.7
-            
-        r = int(r * shade * variation_factor)
-        g = int(g * shade * variation_factor)
-        b = int(b * shade * variation_factor)
-
-        self.height_colour = (
-            max(0, min(r, 255)),
-            max(0, min(g, 255)),
-            max(0, min(b, 255))
-        )
 
 class TileManager:
     def __init__(self, width, height, octaves=8, scale=20):
@@ -127,7 +98,7 @@ class TileManager:
 
         for cy in range(chunk_rows):
             for cx in range(chunk_cols):
-                surf = pygame.Surface((CHUNK_SIZE, CHUNK_SIZE))
+                surf = pygame.Surface((CHUNK_SIZE * TILE_SIZE, CHUNK_SIZE * TILE_SIZE))
 
                 for ty in range(CHUNK_SIZE):
                     for tx in range(CHUNK_SIZE):
@@ -135,8 +106,22 @@ class TileManager:
                         world_y = cy * CHUNK_SIZE + ty
 
                         if world_x < self.width and world_y < self.height:
-                            color = self.tiles[world_y][world_x].height_colour
-                            surf.set_at((tx, ty), color)
+                            tile = self.tiles[world_y][world_x]
+                            texture = tile.tex.copy()
+
+                            shade = 0.4 * tile.height + 0.6
+                            variation = 0.85 + (tile.variation + 1) * 0.15
+                            brightness = shade * variation
+
+                            brightness = max(0.3, min(brightness, 1.5))
+
+                            overlay = pygame.Surface((TILE_SIZE, TILE_SIZE))
+                            val = int(255 * brightness)
+                            overlay.fill((val, val, val))
+
+                            texture.blit(overlay, (0, 0), special_flags=pygame.BLEND_MULT)
+
+                            surf.blit(texture, (tx * TILE_SIZE, ty * TILE_SIZE))
 
                 self.chunks[(cx, cy)] = surf
 
@@ -223,7 +208,8 @@ class TileManager:
             tx = x % CHUNK_SIZE
             ty = y % CHUNK_SIZE
 
-            chunk_surf.set_at((tx, ty), tile.height_colour)
+            texture = tile.tex
+            chunk_surf.blit(texture, (tx * TILE_SIZE, ty * TILE_SIZE))
 
     def get_tiles(self, type):
         tiles = []
@@ -277,7 +263,7 @@ class TileManager:
             for cx in range(start_chunk_x, end_chunk_x + 1):
                 chunk_surf = self.chunks.get((cx, cy))
                 if chunk_surf:
-                    screen_x = int(cx * CHUNK_SIZE * gs - cam_x - gs/2)
-                    screen_y = int(cy * CHUNK_SIZE * gs - cam_y - gs/2)
-                    scaled_surf = pygame.transform.scale(chunk_surf, (CHUNK_SIZE * gs, CHUNK_SIZE * gs))
-                    renderer.screen.blit(scaled_surf, (screen_x, screen_y))
+                    screen_x = int(cx * CHUNK_SIZE * TILE_SIZE - cam_x)
+                    screen_y = int(cy * CHUNK_SIZE * TILE_SIZE - cam_y)
+
+                    renderer.screen.blit(chunk_surf, (screen_x, screen_y))

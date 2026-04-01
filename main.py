@@ -1,14 +1,13 @@
 import pygame
+pygame.init()
+screen = pygame.display.set_mode((1280,720))
+
 import time
 from rendering import Renderer
 from pawn import Pawn
 from world import TileManager, DetailManager, BuildingSystem, PlantManager, ItemManager, DayNightCycle
 from ui import PawnSelector, HealthPanel, PieChart, LineGraph, NotificationFeed
 from helpers import closest_to_mouse
-
-pygame.init()
-
-screen = pygame.display.set_mode((1280,720))
 
 world_width = 128
 world_height = 128
